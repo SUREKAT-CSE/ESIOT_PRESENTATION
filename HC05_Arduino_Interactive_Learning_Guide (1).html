@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interfacing HC-05 Bluetooth Module with Arduino | ECE Learning Lab</title>
+<style>
+:root{--navy:#10233f;--blue:#1769aa;--cyan:#e8f6ff;--ink:#1d2939;--muted:#5d6b7c;--line:#d9e2ec;--paper:#fff;--bg:#f3f7fb;--green:#147d4b;--red:#b42318;--amber:#8a5700}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(125deg,#10233f,#1769aa);color:white;padding:42px 22px 36px}header .wrap,main,.navwrap{max-width:1120px;margin:auto}.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;opacity:.85}h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;margin:.55rem 0}header p{max-width:800px;margin:.6rem 0;color:#e8f2ff}.meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.pill{border:1px solid #ffffff70;background:#ffffff12;padding:6px 11px;border-radius:999px;font-size:.88rem}
+nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.navwrap{display:flex;gap:8px;overflow:auto;padding:10px 14px}.navwrap a{white-space:nowrap;text-decoration:none;color:var(--navy);font-size:.9rem;font-weight:650;padding:7px 10px;border-radius:8px}.navwrap a:hover{background:var(--cyan)}
+main{padding:24px 18px 60px}section{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:clamp(18px,3vw,30px);margin:18px 0;box-shadow:0 5px 18px #10233f08;scroll-margin-top:70px}h2{font-size:1.65rem;color:var(--navy);margin:0 0 14px}h3{font-size:1.15rem;color:#174c7d;margin:22px 0 8px}h4{margin:10px 0 5px}p{margin:8px 0 12px}ul,ol{padding-left:24px}li{margin:4px 0}.callout{border-left:4px solid var(--blue);background:var(--cyan);padding:13px 16px;border-radius:8px;margin:14px 0}.warn{border-left-color:#d98c00;background:#fff7e6}.good{border-left-color:var(--green);background:#eaf8f0}.danger{border-left-color:var(--red);background:#fff0ef}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.mini{border:1px solid var(--line);padding:15px;border-radius:12px;background:#fcfdff}.mini h3{margin-top:0}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#edf4fa;color:var(--navy)}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{background:#edf2f7;padding:2px 5px;border-radius:4px}pre{background:#0e1b2c;color:#edf6ff;padding:17px;border-radius:12px;overflow:auto;font-size:.9rem;line-height:1.55;white-space:pre}#code pre{background:#fff;color:#1d2939;border:1px solid var(--line)}#code pre code{background:transparent;color:inherit;padding:0;border-radius:0}.diagram{background:#fbfdff;border:1px solid var(--line);padding:10px;border-radius:12px;overflow:auto}.diagram svg{min-width:620px;width:100%;height:auto}.formula{font-size:1.12rem;font-weight:700;color:#153f67;background:#f0f6fc;border-radius:8px;padding:10px 13px;display:block;margin:10px 0}.muted{color:var(--muted)}details{border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin:9px 0}summary{cursor:pointer;font-weight:700;color:#174c7d}button{background:var(--blue);color:white;border:0;border-radius:8px;padding:10px 15px;font:inherit;font-weight:700;cursor:pointer;margin:5px 6px 5px 0}button.secondary{background:#e9eff5;color:var(--navy)}button:hover{filter:brightness(.95)}.question{padding:14px 0;border-bottom:1px solid var(--line)}.question:last-child{border-bottom:0}.question label{display:block;padding:3px 0;cursor:pointer}.feedback{margin-top:7px;font-size:.94rem;font-weight:600}.correct{color:var(--green)}.incorrect{color:var(--red)}.result{padding:13px;border-radius:10px;background:#edf4fa;margin:12px 0;font-weight:700}.tag{font-size:.75rem;font-weight:800;border-radius:5px;padding:3px 7px;background:#edf4fa;color:#174c7d;text-transform:uppercase;letter-spacing:.04em}.steps{counter-reset:step}.steps li{padding-left:4px;margin-bottom:9px}.small{font-size:.9rem}footer{text-align:center;color:var(--muted);padding:25px 15px}
+@media(max-width:650px){header{padding:30px 18px}main{padding:14px 10px 35px}section{border-radius:12px;padding:17px}pre{font-size:.8rem}}
+@media print{body{background:white;font-size:11pt}nav,button,.no-print{display:none!important}header{background:white;color:#10233f;padding:10px 0;border-bottom:2px solid #10233f}header p{color:#333}main{padding:0;max-width:none}section{box-shadow:none;border:1px solid #aaa;break-inside:avoid;margin:12px 0;padding:16px}details{break-inside:avoid}details>*{display:block}a{color:inherit;text-decoration:none}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f2f2f2;color:#111} .diagram{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">ECE • Embedded Systems • Practical Learning Module</div>
+<h1>Interfacing HC-05 Bluetooth Module with Arduino</h1>
+<p>A practical, theory-backed guide to wire an HC-05 serial Bluetooth module to an Arduino, send data wirelessly, test communication, and troubleshoot common lab issues.</p>
+<div class="meta"><span class="pill">Academic level: B.E./B.Tech</span><span class="pill">Platform: Arduino Uno + HC-05</span><span class="pill">Includes circuit, code, calculations & quizzes</span></div>
+</div></header>
+<nav><div class="navwrap">
+<a href="#intro">Introduction</a><a href="#hardware">Hardware</a><a href="#circuit">Circuit</a><a href="#working">Working</a><a href="#code">Arduino Code</a><a href="#test">Testing</a><a href="#numericals">Examples</a><a href="#gate">GATE Practice</a><a href="#interview">Interview Qs</a><a href="#quiz">Quiz</a><a href="#revision">Revision</a>
+</div></nav>
+<main>
+<section id="intro"><h2>1. Introduction and learning objectives</h2>
+<p>The <b>HC-05</b> is a low-cost Bluetooth Classic module commonly used to add short-range wireless serial communication to microcontroller projects. It provides a UART (Universal Asynchronous Receiver/Transmitter) interface: bytes received over Bluetooth are delivered on its serial pins, and bytes sent by the Arduino can be transmitted wirelessly to a paired device.</p>
+<div class="callout"><b>Core idea:</b> the HC-05 acts as a wireless serial cable. Your Arduino sketch reads and writes serial bytes; the Bluetooth link carries those bytes between paired devices.</div>
+<div class="grid">
+<div class="mini"><h3>Learning objectives</h3><ul><li>Identify HC-05 power and UART pins.</li><li>Wire the module safely to Arduino Uno.</li><li>Understand UART and Bluetooth pairing.</li><li>Upload a sketch and exchange text.</li><li>Diagnose common connection failures.</li></ul></div>
+<div class="mini"><h3>Prerequisites</h3><ul><li>Basic Arduino IDE use</li><li>Digital pins and serial communication</li><li>Voltage, current, ground reference</li><li>Basic C/C++ sketch structure</li></ul></div>
+<div class="mini"><h3>Key terminology</h3><p><b>UART:</b> asynchronous serial interface.</p><p><b>Baud rate:</b> symbols per second; commonly 9600 for data mode.</p><p><b>Pairing:</b> establishing a Bluetooth relationship.</p><p><b>TX/RX:</b> transmit and receive data pins.</p></div>
+</div>
+<h3>What the project demonstrates</h3><p>After pairing a phone or computer with the HC-05, a Bluetooth serial-terminal app can send a character such as <code>1</code> or <code>0</code>. The Arduino receives it and prints a response. The example below demonstrates communication only; it does not switch a high-power load.</p>
+</section>
+
+<section id="hardware"><h2>2. Required components and pin functions</h2>
+<div class="tablewrap"><table><thead><tr><th>Component</th><th>Quantity</th><th>Purpose / notes</th></tr></thead><tbody>
+<tr><td>Arduino Uno (or compatible)</td><td>1</td><td>Runs the sketch and provides a UART-like software serial connection.</td></tr>
+<tr><td>HC-05 Bluetooth module / breakout board</td><td>1</td><td>Bluetooth Classic serial link. Breakout boards may include a regulator; bare modules have different supply requirements.</td></tr>
+<tr><td>Resistors: 1 kΩ and 2 kΩ</td><td>1 each</td><td>Voltage divider for Arduino TX → HC-05 RX. Equivalent divider values may be used.</td></tr>
+<tr><td>Breadboard and jumper wires</td><td>As needed</td><td>Make signal and ground connections.</td></tr>
+<tr><td>USB cable and computer</td><td>1 each</td><td>Upload code and open Serial Monitor.</td></tr>
+<tr><td>Phone / PC with Bluetooth serial terminal</td><td>1</td><td>Pair with HC-05 and send/receive text.</td></tr>
+</tbody></table></div>
+<div class="callout warn"><b>Voltage safety:</b> Arduino Uno TX is approximately 5 V logic. HC-05 UART RX is typically 3.3 V logic. Use a voltage divider or a suitable logic-level shifter on the Arduino TX → HC-05 RX path. HC-05 breakout boards vary: verify the board documentation before applying VCC. A board marked for 5 V input may have a regulator, but that does not automatically make its RX pin 5 V tolerant.</div>
+<h3>Typical HC-05 breakout pins</h3><div class="tablewrap"><table><tr><th>Pin</th><th>Function</th><th>Connection / note</th></tr><tr><td>VCC</td><td>Power input</td><td>Follow the exact breakout-board rating; many breakout boards accept 5 V on VCC, while the bare module requires regulated low-voltage power.</td></tr><tr><td>GND</td><td>Ground</td><td>Connect to Arduino GND.</td></tr><tr><td>TXD</td><td>Module transmit</td><td>Connect to Arduino software serial RX (D10 in this example).</td></tr><tr><td>RXD</td><td>Module receive</td><td>Connect from Arduino software serial TX (D11) through a divider/level shifter.</td></tr><tr><td>EN / KEY</td><td>AT-mode control on some boards</td><td>Not needed for ordinary data-mode operation; behavior depends on board variant.</td></tr><tr><td>STATE</td><td>Status output on some boards</td><td>Optional; not used in this example.</td></tr></table></div>
+</section>
+
+<section id="circuit"><h2>3. Circuit diagram and wiring</h2>
+<p>This illustrative circuit uses <b>SoftwareSerial</b> on Arduino pins D10 (RX) and D11 (TX), leaving the Uno's USB serial pins D0/D1 available for uploading and the Serial Monitor.</p>
+<div class="diagram"><svg viewBox="0 0 900 410" role="img" aria-label="Illustrative Arduino Uno to HC-05 circuit with voltage divider">
+<rect x="35" y="75" width="300" height="250" rx="16" fill="#eaf2fb" stroke="#245b91" stroke-width="2"/><text x="185" y="108" text-anchor="middle" font-size="23" font-weight="bold" fill="#123a63">Arduino Uno</text>
+<text x="60" y="155" font-size="17" fill="#123a63">D10 (Software RX)</text><text x="60" y="212" font-size="17" fill="#123a63">D11 (Software TX)</text><text x="60" y="275" font-size="17" fill="#123a63">5V / GND</text>
+<rect x="600" y="90" width="250" height="235" rx="16" fill="#e8f8f1" stroke="#19845a" stroke-width="2"/><text x="725" y="124" text-anchor="middle" font-size="22" font-weight="bold" fill="#125c40">HC-05</text>
+<text x="620" y="166" font-size="17" fill="#125c40">TXD</text><text x="620" y="224" font-size="17" fill="#125c40">RXD</text><text x="620" y="280" font-size="17" fill="#125c40">VCC / GND</text>
+<path d="M335 150 H470 V160 H600" fill="none" stroke="#1769aa" stroke-width="3"/><text x="455" y="139" text-anchor="middle" font-size="14" fill="#1769aa">D10 ← TXD</text>
+<path d="M335 210 H400" fill="none" stroke="#b45309" stroke-width="3"/><rect x="400" y="194" width="65" height="32" rx="5" fill="#fff0d9" stroke="#b45309"/><text x="432" y="215" text-anchor="middle" font-size="14" fill="#7c3d08">1 kΩ</text><path d="M465 210 H500 V230 H600" fill="none" stroke="#b45309" stroke-width="3"/><text x="520" y="195" text-anchor="middle" font-size="13" fill="#7c3d08">to RXD</text>
+<path d="M500 230 V260" stroke="#b45309" stroke-width="3"/><rect x="483" y="260" width="34" height="48" rx="4" fill="#fff0d9" stroke="#b45309"/><text x="500" y="289" text-anchor="middle" font-size="12" fill="#7c3d08">2kΩ</text><path d="M500 308 V345 H440" fill="none" stroke="#b45309" stroke-width="3"/><text x="495" y="366" text-anchor="middle" font-size="13" fill="#7c3d08">GND</text>
+<path d="M335 280 H390 V345 H440" fill="none" stroke="#555" stroke-width="3"/><path d="M600 280 H555 V345 H440" fill="none" stroke="#555" stroke-width="3"/><text x="375" y="300" font-size="13" fill="#333">Common ground</text>
+<path d="M335 290 H550 V290 H600" fill="none" stroke="#19845a" stroke-width="2" stroke-dasharray="5 5"/><text x="450" y="318" text-anchor="middle" font-size="12" fill="#125c40">Power per board rating</text>
+<text x="450" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#10233f">Illustrative wiring — check your exact HC-05 breakout pin labels</text>
+</svg></div>
+<div class="callout"><b>Wiring summary</b><br>HC-05 TXD → Arduino D10<br>Arduino D11 → 1 kΩ resistor → HC-05 RXD; HC-05 RXD node → 2 kΩ resistor → GND (approx. 3.3 V from a 5 V output)<br>HC-05 GND ↔ Arduino GND<br>HC-05 VCC → a supply compatible with your particular board</div>
+<h3>Voltage-divider calculation</h3><span class="formula">V<sub>out</sub> = V<sub>in</sub> × R<sub>bottom</sub> / (R<sub>top</sub> + R<sub>bottom</sub>)</span>
+<p>With 5 V input, R<sub>top</sub> = 1 kΩ and R<sub>bottom</sub> = 2 kΩ: V<sub>out</sub> = 5 × 2/(1+2) ≈ <b>3.33 V</b>. This reduces the logic-high voltage before it reaches HC-05 RXD.</p>
+</section>
+
+<section id="working"><h2>4. Working principle</h2>
+<ol class="steps"><li><b>Power-up:</b> the HC-05 powers on and its LED indicates its current status. Blink patterns vary by module and firmware.</li><li><b>Pairing:</b> enable Bluetooth on a phone/PC, scan for the module (often named HC-05), and pair. Common default PINs on some modules are <code>1234</code> or <code>0000</code>; yours may differ.</li><li><b>Wireless-to-UART path:</b> characters sent by the terminal app cross the Bluetooth connection and appear at HC-05 TXD. Arduino reads them on D10.</li><li><b>UART-to-wireless path:</b> bytes written by Arduino on D11 reach HC-05 RXD through the divider, then are transmitted to the paired terminal.</li><li><b>Baud-rate match:</b> the sketch uses 9600 baud for the HC-05 data UART. Both ends of the serial link must use compatible settings.</li></ol>
+<h3>Signal-flow diagram</h3><div class="diagram"><svg viewBox="0 0 850 150" role="img" aria-label="Phone Bluetooth to HC-05 UART to Arduino flow">
+<rect x="10" y="35" width="170" height="75" rx="10" fill="#eaf2fb" stroke="#245b91"/><text x="95" y="66" text-anchor="middle" font-size="16" font-weight="bold" fill="#123a63">Phone / PC</text><text x="95" y="88" text-anchor="middle" font-size="13" fill="#123a63">Serial terminal</text>
+<path d="M180 72 H245" stroke="#1769aa" stroke-width="3"/><path d="M235 64 L245 72 L235 80" fill="none" stroke="#1769aa" stroke-width="3"/><text x="212" y="55" text-anchor="middle" font-size="12" fill="#1769aa">Bluetooth</text>
+<rect x="245" y="35" width="170" height="75" rx="10" fill="#e8f8f1" stroke="#19845a"/><text x="330" y="66" text-anchor="middle" font-size="16" font-weight="bold" fill="#125c40">HC-05</text><text x="330" y="88" text-anchor="middle" font-size="13" fill="#125c40">Bluetooth ↔ UART</text>
+<path d="M415 72 H480" stroke="#1769aa" stroke-width="3"/><path d="M470 64 L480 72 L470 80" fill="none" stroke="#1769aa" stroke-width="3"/><text x="448" y="55" text-anchor="middle" font-size="12" fill="#1769aa">TXD/RXD</text>
+<rect x="480" y="35" width="170" height="75" rx="10" fill="#fff0d9" stroke="#b45309"/><text x="565" y="66" text-anchor="middle" font-size="16" font-weight="bold" fill="#7c3d08">Arduino Uno</text><text x="565" y="88" text-anchor="middle" font-size="13" fill="#7c3d08">Sketch logic</text>
+<path d="M650 72 H705" stroke="#1769aa" stroke-width="3"/><path d="M695 64 L705 72 L695 80" fill="none" stroke="#1769aa" stroke-width="3"/><rect x="705" y="35" width="135" height="75" rx="10" fill="#f2edff" stroke="#7252a3"/><text x="772" y="66" text-anchor="middle" font-size="15" font-weight="bold" fill="#4b3475">Response</text><text x="772" y="88" text-anchor="middle" font-size="12" fill="#4b3475">LED / text / data</text></svg></div>
+<h3>Advantages and limitations</h3><div class="grid"><div class="mini"><h3>Advantages</h3><ul><li>Low cost and widely used in student prototypes</li><li>Wireless control without a data cable</li><li>Simple UART interface</li><li>Useful for telemetry and short-range control</li></ul></div><div class="mini"><h3>Limitations</h3><ul><li>HC-05 is Bluetooth Classic, not BLE</li><li>Range and reliability depend on environment and antenna</li><li>Not intended for internet access directly</li><li>Logic-level and supply details vary by board</li><li>Phone OS/app compatibility may differ</li></ul></div></div>
+<div class="callout warn"><b>Common misconception:</b> HC-05 is not a Wi-Fi module and does not provide internet connectivity. It is a short-range Bluetooth serial bridge.</div>
+</section>
+
+<section id="code"><h2>5. Arduino program</h2>
+<p>Upload this sketch to an Arduino Uno. It uses D10/D11 for HC-05 and the USB serial connection for debugging. The sketch echoes received text to the Bluetooth terminal and accepts <code>1</code> or <code>0</code> as example commands.</p>
+<pre><code>#include &lt;SoftwareSerial.h&gt;
+
+// Arduino RX, TX
+SoftwareSerial BT(10, 11);
+
+const int ledPin = LED_BUILTIN;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);  // USB Serial Monitor
+  BT.begin(9600);      // HC-05 data-mode UART (typical default)
+  Serial.println("HC-05 ready. Pair your phone and send text.");
+  BT.println("Connected to Arduino!");
+}
+
+void loop() {
+  // Data arriving from phone -> HC-05 -> Arduino
+  while (BT.available()) {
+    char c = BT.read();
+    Serial.write(c);       // show received byte on computer
+
+    if (c == '1') {
+      digitalWrite(ledPin, HIGH);
+      BT.println("\\r\\nLED ON");
+    } else if (c == '0') {
+      digitalWrite(ledPin, LOW);
+      BT.println("\\r\\nLED OFF");
+    } else if (c == '\\r' || c == '\\n') {
+      // Ignore terminal line endings
+    } else {
+      BT.write(c);          // echo other characters back
+    }
+  }
+
+  // Optional: computer Serial Monitor -> phone via HC-05
+  while (Serial.available()) {
+    BT.write(Serial.read());
+  }
+}</code></pre>
+<div class="callout good"><b>How to use the sketch</b><ol><li>In Arduino IDE, select the correct board and COM/serial port.</li><li>Upload with the HC-05 connected as shown. If upload fails, temporarily disconnect wires from D0/D1 if used by any circuit.</li><li>Open Serial Monitor at 9600 baud.</li><li>Pair the phone with HC-05 and open a Bluetooth Classic serial terminal app.</li><li>Send <code>1</code> to turn on the Uno's built-in LED; send <code>0</code> to turn it off.</li></ol></div>
+<h3>Program logic in plain language</h3><ul><li><code>SoftwareSerial BT(10, 11)</code> declares Arduino D10 as receive and D11 as transmit.</li><li><code>BT.begin(9600)</code> sets the module's data UART speed for this example.</li><li><code>BT.available()</code> checks whether received bytes are waiting.</li><li><code>BT.read()</code> reads one byte; <code>BT.write()</code> transmits a byte without text formatting.</li><li><code>BT.println()</code> sends text followed by a line ending.</li></ul>
+<div class="callout warn">The HC-05's UART baud rate in data mode is often 9600, but not guaranteed for every configured module. AT-command mode uses different procedures and commonly different baud settings. Do not assume the data-mode rate and AT-mode rate are identical.</div>
+</section>
+
+<section id="test"><h2>6. Practical procedure, observations and troubleshooting</h2>
+<h3>Lab procedure</h3><ol><li>Inspect the HC-05 board and confirm its power-input rating and pin labels.</li><li>Build the circuit with power disconnected; double-check TX/RX crossing and the divider.</li><li>Connect common ground and then power the circuit.</li><li>Upload the sketch and confirm the IDE reports a successful upload.</li><li>Pair the phone/PC with HC-05. If prompted, try the PIN supplied with the module or its documentation.</li><li>Open a Bluetooth serial terminal, connect, and send <code>1</code>, <code>0</code>, and ordinary text.</li><li>Record whether the LED responds and whether received/transmitted text appears as expected.</li></ol>
+<h3>Expected observations (illustrative, not measured results)</h3><div class="tablewrap"><table><tr><th>Test</th><th>Expected result</th><th>What it verifies</th></tr><tr><td>Pairing succeeds</td><td>Terminal reports connected</td><td>Bluetooth pairing/link</td></tr><tr><td>Send <code>1</code></td><td>Built-in LED turns on; response says LED ON</td><td>Phone → HC-05 → Arduino path</td></tr><tr><td>Send <code>0</code></td><td>Built-in LED turns off; response says LED OFF</td><td>Command decoding and output control</td></tr><tr><td>Send other text</td><td>Characters are echoed</td><td>Bidirectional serial path</td></tr></table></div>
+<div class="callout warn"><b>Important:</b> these are theoretical expected outcomes for the supplied sketch, not a claim that a physical simulation or hardware test was run.</div>
+<h3>Troubleshooting table</h3><div class="tablewrap"><table><tr><th>Symptom</th><th>Possible cause</th><th>Action</th></tr><tr><td>Module not visible</td><td>No power, wrong board, already connected, or Bluetooth Classic scanning limitation</td><td>Check power/LED; disconnect existing peer; use a Bluetooth Classic serial app.</td></tr><tr><td>Pairs but no text</td><td>TX/RX reversed incorrectly, wrong baud rate, terminal not connected</td><td>Cross TXD→Arduino RX and Arduino TX→RXD; verify 9600 or configured rate.</td></tr><tr><td>Garbled text</td><td>Baud mismatch or noisy/poor power</td><td>Match baud settings; inspect supply and ground.</td></tr><tr><td>Arduino upload fails</td><td>Serial pins conflict or wrong port/board</td><td>Use D10/D11 as shown; check board and COM port.</td></tr><tr><td>Module resets/disconnects</td><td>Unstable supply or wiring short</td><td>Check correct VCC input rating, common ground, and secure connections.</td></tr><tr><td>RXD may be damaged</td><td>5 V logic applied directly to 3.3 V UART input</td><td>Use a divider or logic-level shifter.</td></tr></table></div>
+</section>
+
+<section id="numericals"><h2>7. Solved numerical examples</h2>
+<h3>Example 1 — Voltage divider (easy)</h3><p><b>Given:</b> Arduino output = 5 V, R<sub>top</sub> = 1 kΩ, R<sub>bottom</sub> = 2 kΩ. Find the voltage delivered to HC-05 RXD.</p><p><b>Formula:</b> Vout = Vin × Rbottom/(Rtop + Rbottom)</p><p><b>Substitution:</b> Vout = 5 × 2/(1 + 2) = 10/3 = 3.33 V.</p><p><b>Answer:</b> approximately <b>3.33 V</b>, a reduced logic-high level suitable for a typical 3.3 V UART input, subject to the module's specification.</p>
+<h3>Example 2 — UART byte time (moderate)</h3><p><b>Given:</b> UART setting 9600 baud, 8 data bits, no parity, 1 stop bit (8-N-1). Find approximate time for one byte frame.</p><p>Each frame uses 1 start + 8 data + 1 stop = 10 bits. At 9600 bits/s, time = 10/9600 s = 0.0010417 s.</p><p><b>Answer:</b> approximately <b>1.04 ms per byte</b>, excluding software overhead and Bluetooth packet/link delays.</p>
+<h3>Example 3 — Divider current (moderate)</h3><p><b>Given:</b> 5 V source and series resistors 1 kΩ + 2 kΩ. Approximate current through the divider, ignoring the HC-05 input load.</p><p>I = V/Rtotal = 5 V / 3000 Ω = 0.001667 A.</p><p><b>Answer:</b> approximately <b>1.67 mA</b>. This is an ideal estimate; actual input loading and output resistance affect the result.</p>
+<h3>Example 4 — GATE-style baud calculation (difficult)</h3><p><b>Question:</b> A UART sends 100 bytes using 8-N-1 framing at 9600 bit/s. Ignoring inter-frame gaps and Bluetooth overhead, estimate the minimum serial transmission time.</p><p>Each byte requires 10 bits, so 100 bytes require 100 × 10 = 1000 bits. Time = 1000/9600 = 0.10417 s.</p><p><b>Answer:</b> approximately <b>104 ms</b>. Actual end-to-end Bluetooth delivery may take longer because this estimate excludes protocol overhead, buffering and application delays.</p>
+</section>
+
+<section id="gate"><h2>8. GATE-style practice questions</h2><p class="muted">These are original practice questions, not actual previous-year GATE questions.</p>
+<div class="question"><span class="tag">Easy</span><p><b>1. The primary interface between Arduino and HC-05 is typically:</b></p><p>A. I²C &nbsp; B. UART serial &nbsp; C. HDMI &nbsp; D. Ethernet</p><details><summary>Answer and explanation</summary><p><b>Correct: B.</b> HC-05 exposes UART TXD/RXD pins for serial data. Bluetooth transports that serial data wirelessly.</p></details></div>
+<div class="question"><span class="tag">Easy</span><p><b>2. The correct TX/RX wiring rule is:</b></p><p>A. TX to TX only &nbsp; B. RX to RX only &nbsp; C. TX to RX and RX to TX &nbsp; D. Leave both open</p><details><summary>Answer and explanation</summary><p><b>Correct: C.</b> The transmitter of one device must feed the receiver of the other.</p></details></div>
+<div class="question"><span class="tag">Moderate</span><p><b>3. Why is a divider used from Uno TX to HC-05 RXD?</b></p><p>A. To increase Bluetooth range &nbsp; B. To reduce logic-high voltage &nbsp; C. To change UART into I²C &nbsp; D. To boost current</p><details><summary>Answer and explanation</summary><p><b>Correct: B.</b> The Uno uses approximately 5 V logic, while the HC-05 UART input is typically 3.3 V logic.</p></details></div>
+<div class="question"><span class="tag">Moderate</span><p><b>4. With 1 kΩ on top and 2 kΩ to ground, a 5 V input produces approximately:</b></p><p>A. 1.67 V &nbsp; B. 2.50 V &nbsp; C. 3.33 V &nbsp; D. 5.00 V</p><details><summary>Answer and explanation</summary><p><b>Correct: C.</b> Vout = 5 × 2/(1+2) = 3.33 V.</p></details></div>
+<div class="question"><span class="tag">Moderate</span><p><b>5. In <code>SoftwareSerial BT(10,11)</code>, pin 10 is configured as:</b></p><p>A. Software RX &nbsp; B. Software TX &nbsp; C. Ground &nbsp; D. Hardware reset</p><details><summary>Answer and explanation</summary><p><b>Correct: A.</b> The constructor arguments are receive pin first, transmit pin second.</p></details></div>
+<div class="question"><span class="tag">Moderate</span><p><b>6. A common data-mode baud rate used in beginner HC-05 examples is:</b></p><p>A. 50 &nbsp; B. 9600 &nbsp; C. 1,000,000 always &nbsp; D. 0</p><details><summary>Answer and explanation</summary><p><b>Correct: B.</b> 9600 baud is common, but a configured module may use another rate; verify rather than assume.</p></details></div>
+<div class="question"><span class="tag">Difficult</span><p><b>7. For 8-N-1 framing, how many serial bits are sent per data byte?</b></p><p>A. 8 &nbsp; B. 9 &nbsp; C. 10 &nbsp; D. 11</p><details><summary>Answer and explanation</summary><p><b>Correct: C.</b> One start bit + eight data bits + one stop bit = 10 bits.</p></details></div>
+<div class="question"><span class="tag">Difficult</span><p><b>8. At 9600 bit/s with 8-N-1 framing, approximate time for one byte is:</b></p><p>A. 0.104 ms &nbsp; B. 1.04 ms &nbsp; C. 10.4 ms &nbsp; D. 104 ms</p><details><summary>Answer and explanation</summary><p><b>Correct: B.</b> 10 bits/9600 bit/s = 1.0417 ms.</p></details></div>
+<div class="question"><span class="tag">Moderate</span><p><b>9. Which statement about HC-05 is correct?</b></p><p>A. It is a Wi-Fi router &nbsp; B. It provides Bluetooth Classic serial connectivity &nbsp; C. It is a GPS receiver &nbsp; D. It converts analog audio to HDMI</p><details><summary>Answer and explanation</summary><p><b>Correct: B.</b> HC-05 is widely used as a Bluetooth Classic UART bridge, not as a Wi-Fi or GPS module.</p></details></div>
+<div class="question"><span class="tag">Difficult</span><p><b>10. If pairing succeeds but data is unreadable, the first useful checks are:</b></p><p>A. Change the Arduino color &nbsp; B. Check UART baud rate and TX/RX wiring &nbsp; C. Remove common ground &nbsp; D. Apply 12 V to RXD</p><details><summary>Answer and explanation</summary><p><b>Correct: B.</b> Baud mismatch and crossed-wiring errors are common causes. Never apply 12 V to a logic input.</p></details></div>
+
+<h3>Interactive GATE quiz</h3><p>Choose one answer for each question, then check your score. Explanations appear after submission.</p>
+<form id="gateQuiz"><div id="gateQuestions"></div><div id="gateResult" class="result" aria-live="polite">Your score will appear here.</div><button type="button" onclick="gradeQuiz('gateQuiz','gateResult',gateData)">Check answers</button><button type="button" class="secondary" onclick="resetQuiz('gateQuiz','gateResult',gateData)">Reset quiz</button></form>
+</section>
+
+<section id="interview"><h2>9. Core electronics / embedded interview questions</h2>
+<details><summary>1. What is the HC-05 module?</summary><p>A Bluetooth Classic module commonly used to provide a wireless serial link through UART TXD and RXD pins.</p></details>
+<details><summary>2. How is HC-05 different from HC-06?</summary><p>Common HC-05 boards can support master and slave roles depending on firmware/configuration, while common HC-06 boards are typically slave-only. Clone variants exist, so confirm the exact board.</p></details>
+<details><summary>3. Why do TX and RX need to be crossed?</summary><p>Data output from one device must reach the input of the other. Connect HC-05 TXD to Arduino RX, and Arduino TX to HC-05 RXD.</p></details>
+<details><summary>4. Why use a voltage divider?</summary><p>To reduce the Arduino Uno's 5 V TX logic to a level closer to the HC-05's typical 3.3 V UART input level. A logic-level shifter is another option.</p></details>
+<details><summary>5. What does baud rate mean?</summary><p>It describes the signaling rate. For the common binary UART configuration, baud rate corresponds to bit rate. Both serial endpoints must use compatible settings.</p></details>
+<details><summary>6. What is the purpose of SoftwareSerial?</summary><p>It implements serial communication on selected digital pins in software, allowing the Uno's hardware UART on D0/D1 to remain available for USB programming and debugging. Timing and throughput are more limited than hardware UART.</p></details>
+<details><summary>7. Pairing works but the Arduino receives nothing. How do you debug?</summary><p>Confirm the app is connected to a Bluetooth Classic serial service, verify HC-05 TXD goes to the Arduino RX pin, check common ground and baud rate, and test with a minimal echo sketch.</p></details>
+<details><summary>8. Can an iPhone connect to every HC-05?</summary><p>Not necessarily. HC-05 generally uses Bluetooth Classic serial profiles that are not universally available to standard iOS apps. Device, OS, module firmware and app support must be checked.</p></details>
+<details><summary>9. What is AT-command mode?</summary><p>A configuration mode used on supported HC-05 firmware to inspect or change settings such as name, role, PIN or UART parameters. Entry procedure and baud rate depend on the board/firmware; follow its documentation.</p></details>
+<details><summary>10. What design precautions matter in a real product?</summary><p>Check logic-level compatibility, supply stability, pairing/security behavior, radio range, latency, reconnection handling, data framing, error detection, and whether Bluetooth Classic is permitted by the target platform and requirements.</p></details>
+<details><summary>11. Is Bluetooth data automatically encrypted and secure enough for every application?</summary><p>No wireless link should be assumed secure solely because it is paired. Assess the module's security capabilities, pairing configuration, firmware age, threat model and the sensitivity of the commands/data.</p></details>
+<details><summary>12. Why might SoftwareSerial lose bytes?</summary><p>Software-based serial depends on precise timing and can be disrupted by interrupts or high data rates. Reduce the baud rate, minimize other timing-critical work, or use a hardware UART when reliability/throughput matters.</p></details>
+</section>
+
+<section id="quiz"><h2>10. Interactive 10-question topic quiz</h2><p>Exactly 10 multiple-choice questions. Select answers, submit to see score and explanations, or reset to try again.</p>
+<form id="topicQuiz"><div id="topicQuestions"></div><div id="topicResult" class="result" aria-live="polite">Score: not submitted yet.</div><button type="button" onclick="gradeQuiz('topicQuiz','topicResult',topicData)">Check answers</button><button type="button" class="secondary" onclick="resetQuiz('topicQuiz','topicResult',topicData)">Reset quiz</button></form>
+</section>
+
+<section id="revision"><h2>11. Quick revision sheet</h2>
+<h3>Important facts</h3><ul><li>HC-05 commonly provides Bluetooth Classic ↔ UART connectivity.</li><li>TXD connects to the other device's RX; RXD connects to the other device's TX.</li><li>Use common ground between Arduino and module.</li><li>Protect the HC-05 RXD input from 5 V logic; verify exact board ratings.</li><li>9600 baud is common in data-mode examples, but configuration may differ.</li><li>Pairing is not the same as a live serial-terminal connection: connect to the module from a compatible app.</li></ul>
+<h3>Formula sheet</h3><span class="formula">Voltage divider: Vout = Vin × Rbottom / (Rtop + Rbottom)</span><span class="formula">UART 8-N-1 frame: 1 start + 8 data + 1 stop = 10 bits per byte</span><span class="formula">Ideal byte time at baud rate B: t ≈ 10/B seconds (8-N-1)</span><span class="formula">Divider current (unloaded): I ≈ Vin/(Rtop + Rbottom)</span>
+<h3>Comparison: Bluetooth serial vs USB serial</h3><div class="tablewrap"><table><tr><th>Feature</th><th>HC-05 Bluetooth serial</th><th>USB serial to computer</th></tr><tr><td>Physical path</td><td>Wireless radio + UART</td><td>USB cable + Arduino USB-serial interface</td></tr><tr><td>Typical use</td><td>Phone/PC wireless commands and telemetry</td><td>Programming, debugging and logging</td></tr><tr><td>Dependency</td><td>Pairing and compatible Bluetooth serial app</td><td>USB cable, driver and serial port</td></tr><tr><td>Latency / reliability</td><td>Depends on radio link and Bluetooth stack</td><td>Usually stable for bench debugging</td></tr></table></div>
+<h3>Applications</h3><ul><li>Wireless robot and vehicle control prototypes</li><li>Sensor readings sent to a phone or PC</li><li>Home-automation demonstrations (with suitable driver circuitry)</li><li>Configuration and diagnostic interfaces for microcontroller prototypes</li><li>Educational UART and embedded-systems labs</li></ul>
+<h3>Final lab conclusion</h3><p>The HC-05 enables short-range wireless serial communication between an Arduino and a compatible Bluetooth Classic device. Correct TX/RX wiring, common ground, appropriate supply voltage, safe logic levels, and matching UART settings are the main requirements for reliable operation.</p>
+<div class="callout"><b>Assumptions and limitations:</b> The circuit and code target a typical Arduino Uno plus HC-05 breakout board. Breakout designs, pin labels, firmware, pairing PINs, and default baud rates vary. No physical hardware test or simulation screenshot was provided, so diagrams and expected results are illustrative rather than measured.</div>
+<p class="no-print"><button onclick="window.print()">Save as PDF</button></p>
+</section>
+</main>
+<footer>CSE Learning Lab • Standalone offline learning resource • Check your board datasheet before powering hardware.</footer>
+<script>
+const gateData = [
+{q:"The primary interface used by HC-05 with Arduino is:",o:["I²C","UART serial","HDMI","Ethernet"],a:1,e:"HC-05 exposes UART TXD/RXD pins for serial communication."},
+{q:"Correct TX/RX wiring is:",o:["TX to TX","RX to RX","TX to RX and RX to TX","Both pins to 5 V"],a:2,e:"The transmitter of one device feeds the receiver of the other."},
+{q:"Why reduce Arduino TX voltage before HC-05 RXD?",o:["To increase range","To protect the 3.3 V logic input","To convert UART to I²C","To increase baud rate"],a:1,e:"Uno TX is about 5 V logic; HC-05 UART RX is typically 3.3 V logic."},
+{q:"A 1 kΩ top and 2 kΩ bottom divider from 5 V gives:",o:["1.67 V","2.50 V","3.33 V","5 V"],a:2,e:"Vout = 5 × 2/(1+2) = 3.33 V."},
+{q:"In SoftwareSerial BT(10,11), D10 is:",o:["RX","TX","GND","RESET"],a:0,e:"SoftwareSerial constructor order is receive pin, then transmit pin."},
+{q:"A common HC-05 data-mode baud setting is:",o:["9600","50","0","Always 1 Mbps"],a:0,e:"9600 is common but the module may have been configured differently."},
+{q:"An 8-N-1 UART frame uses how many bits per byte?",o:["8","9","10","11"],a:2,e:"One start + eight data + one stop = 10 bits."},
+{q:"At 9600 bit/s, ideal time for one 8-N-1 byte is approximately:",o:["0.104 ms","1.04 ms","10.4 ms","104 ms"],a:1,e:"10/9600 seconds = 1.04 ms."},
+{q:"HC-05 is primarily:",o:["Wi-Fi router","Bluetooth Classic serial module","GPS receiver","Infrared sensor"],a:1,e:"It bridges Bluetooth Classic data to UART serial."},
+{q:"Pairing succeeds but data is garbled. First check:",o:["LED color","Baud rate and TX/RX wiring","Remove ground","Use 12 V on RXD"],a:1,e:"Baud mismatch and wiring errors are common causes; never overvoltage logic inputs."}
+];
+const topicData = [
+{q:"Which HC-05 pin transmits serial data from the module to Arduino?",o:["VCC","GND","TXD","EN only"],a:2,e:"TXD is the module's serial transmit output."},
+{q:"Which pin pair is used in the example sketch?",o:["D0 and D1","D10 and D11","A0 and A1","D2 and D3"],a:1,e:"SoftwareSerial BT(10, 11) uses D10 as RX and D11 as TX."},
+{q:"What must Arduino and HC-05 share for UART signaling?",o:["Same case color","Common ground reference","Same antenna","Same USB cable"],a:1,e:"A common ground establishes a shared voltage reference."},
+{q:"What does BT.available() check?",o:["Bluetooth battery","Whether received bytes are available","The Wi-Fi signal","The Arduino clock"],a:1,e:"It reports how many bytes can be read from the serial receive buffer."},
+{q:"Which command turns the built-in LED on in the example?",o:["Send 0","Send 1","Send 9","Send OFF only"],a:1,e:"The sketch checks for character '1' and sets LED_BUILTIN HIGH."},
+{q:"What is the main purpose of pairing?",o:["Increase Arduino RAM","Establish a Bluetooth relationship with the peer","Set the Arduino pin mode","Compile the sketch"],a:1,e:"Pairing establishes a relationship; a compatible terminal app must also connect."},
+{q:"Which is a safe practice for Arduino TX to HC-05 RXD?",o:["Connect 5 V directly in every case","Use a suitable divider or level shifter","Connect to VCC","Leave Arduino ground disconnected"],a:1,e:"Protect the typical 3.3 V UART input from a 5 V logic output."},
+{q:"If both sides are set to incompatible baud rates, what may happen?",o:["Data may be garbled or missed","Bluetooth changes to Wi-Fi","The code automatically recompiles","The module becomes a sensor"],a:0,e:"Serial timing must match on both UART endpoints."},
+{q:"Which platform is most likely to support a typical HC-05 Bluetooth Classic serial app?",o:["A compatible Android phone or PC","Every device without Bluetooth","Only an HDMI monitor","A passive resistor"],a:0,e:"Use a phone/PC and application that support Bluetooth Classic serial communication."},
+{q:"The diagram and expected observations in this page are:",o:["Measured oscilloscope data","Illustrative learning material, not a claim of a hardware test","An official manufacturer test report","A guarantee for every clone board"],a:1,e:"No physical test screenshot was supplied; board variants can differ."}
+];
+function renderQuiz(formId, containerId, data){
+ const root=document.getElementById(containerId);
+ root.innerHTML=data.map((x,i)=>`<div class="question" id="${formId}-q${i}"><p><b>${i+1}. ${x.q}</b></p>${x.o.map((opt,j)=>`<label><input type="radio" name="${formId}-a${i}" value="${j}"> ${String.fromCharCode(65+j)}. ${opt}</label>`).join("")}<div class="feedback" id="${formId}-f${i}"></div></div>`).join("");
+}
+function gradeQuiz(formId,resultId,data){
+ let score=0,answered=0;
+ data.forEach((x,i)=>{
+  const chosen=document.querySelector(`input[name="${formId}-a${i}"]:checked`);
+  const fb=document.getElementById(`${formId}-f${i}`);
+  if(chosen){answered++;if(Number(chosen.value)===x.a){score++;fb.className="feedback correct";fb.textContent="Correct. "+x.e;}else{fb.className="feedback incorrect";fb.textContent="Incorrect. Correct answer: "+String.fromCharCode(65+x.a)+". "+x.o[x.a]+". "+x.e;}}
+  else{fb.className="feedback incorrect";fb.textContent="Unanswered. Correct answer: "+String.fromCharCode(65+x.a)+". "+x.o[x.a]+". "+x.e;}
+ });
+ document.getElementById(resultId).textContent=`Score: ${score}/${data.length} (${Math.round(score/data.length*100)}%). Answered: ${answered}/${data.length}. Review the feedback below each question.`;
+}
+function resetQuiz(formId,resultId,data){
+ document.getElementById(formId).querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
+ data.forEach((x,i)=>{const fb=document.getElementById(`${formId}-f${i}`);fb.textContent="";fb.className="feedback";});
+ document.getElementById(resultId).textContent="Score: not submitted yet.";
+}
+renderQuiz("gateQuiz","gateQuestions",gateData);
+renderQuiz("topicQuiz","topicQuestions",topicData);
+</script>
+</body></html>
